@@ -1,4 +1,4 @@
-# Barista
+# Barista Bot
 
 ## Summary
 
