@@ -1,0 +1,26 @@
+{
+  "name": "barista",
+  "version": "1.0.0",
+  "description": "Barsita bot for facebook page of Mom & Pop's Cafe",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mustafa Campwala",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "express-handlebars": "^3.0.0",
+    "mongodb": "^2.2.24",
+    "mongojs": "^2.4.0",
+    "mongoose": "^4.5.9",
+    "nodemon": "^1.11.0",
+    "request": "^2.79.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}
