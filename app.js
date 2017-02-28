@@ -1,14 +1,14 @@
 'use strict'
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const request = require('request')
-const app = express()
-const _ = require('underscore');
-const apiai = require('apiai');
+let express = require('express')
+let bodyParser = require('body-parser')
+let request = require('request')
+let app = express()
+let _ = require('underscore');
+let apiai = require('apiai');
 
 // Package and API key for api.ai
-const apiaiApp = apiai(process.env.API_AI);
+let apiaiApp = apiai(process.env.API_AI);
 
 app.set('port', (process.env.PORT || 5000))
 
