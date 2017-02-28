@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function(req, res) {
-    res.send('home')
+    res.send('I am only a bot')
 })
 
 // Webhook for Facebook verification
