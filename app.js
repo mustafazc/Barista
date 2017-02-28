@@ -15,6 +15,7 @@ app.set('port', (process.env.PORT || 5000))
 
 
 
+console.log('hi')
 var path = require('path');
 module.exports = function() {
   global.appRequire = function(name) {
