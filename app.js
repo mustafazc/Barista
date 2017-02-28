@@ -4,18 +4,16 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
-const path = require('path');
 const _ = require('underscore');
 
 // Package and API key for api.ai
 const apiai = require('apiai');
-const apiaiApp = apiai(APIAI_TOKEN);
+const apiaiApp = apiai(process.env.API_AI);
 
 app.set('port', (process.env.PORT || 5000))
 
 
 
-console.log('hi')
 var path = require('path');
 module.exports = function() {
   global.appRequire = function(name) {
@@ -26,7 +24,7 @@ module.exports = function() {
 
 // Mongoose Connection
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/baristars');
+mongoose.connect(process.env.MONGODB_URI);
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: false}))
@@ -34,17 +32,13 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function(req, res) {
-    res.render(
-    <html>
-        <head><title>Mom N Pop Barista</title></head>
-        <h1>Welcome to Mom N Pop Barista</h1>
-    </html>)
+    res.send('home')
 })
 
 // Webhook for Facebook verification
 app.get('/webhook/', function(req, res) {
     if (req.query['hub.verify_token'] === 'barista') {
-        res.send(req.query['hub.challenge'])
+        res.status(200).send(req.query['hub.challenge'])
     } else {
     res.send('Error, wrong token')
     }
@@ -74,7 +68,7 @@ app.post('/webhook/', (req, res) => {
 });
 
 // Facebook Access Token
-const token = VERIFICATION_TOKEN
+const token = process.env.FACEBOOK_TOKEN
 
 // Send message function which passes on message to api.ai and responds to user
 function sendMessage(event) {
