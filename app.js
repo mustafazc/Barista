@@ -6,6 +6,7 @@ const request = require('request')
 const app = express()
 const _ = require('underscore');
 const apiai = require('apiai');
+const path = require('path');
 // Package and API key for api.ai
 const apiaiApp = apiai(process.env.API_AI);
 
@@ -23,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Index route
 app.get('/', function(req, res) {
-    res.send('I am only a bot')
+    res.sendFile(path.join(__dirname + '/index.html'));
 })
 
 // Webhook for Facebook verification
