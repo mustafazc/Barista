@@ -10,6 +10,7 @@
   "author": "Mustafa Campwala",
   "license": "ISC",
   "dependencies": {
+    "apiai": "^4.0.0",
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
