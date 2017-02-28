@@ -6,7 +6,6 @@ const request = require('request')
 const app = express()
 const _ = require('underscore');
 const apiai = require('apiai');
-
 // Package and API key for api.ai
 const apiaiApp = apiai(process.env.API_AI);
 
@@ -19,6 +18,8 @@ mongoose.connect(process.env.MONGODB_URI);
 //Middleware
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Index route
 app.get('/', function(req, res) {
