@@ -118,7 +118,7 @@ var dueOrders = mongoose.model('dueOrders', {
 // Function that creates a new document for each user ID
 function prepareForOrder(sender) {
     console.log(sender)
-    var potentialOrder = new dueOrders({CustomerName: "facebook pls give name", CustomerId: sender, Total: 0, Order: "", created_at: Date.now()})
+    var potentialOrder = new dueOrders({CustomerName: "Fetch name from fb", CustomerId: sender, Total: 0, Order: "", created_at: Date.now()})
     potentialOrder.save().then(function(err, result) {
         console.log('Order from - ' + sender);
     });
@@ -127,7 +127,7 @@ function prepareForOrder(sender) {
         CustomerId: sender
     }, {
         $set: {
-            CustomerName: "facebookk"
+            CustomerName: "Facebook Name"
         }
     }, {
         new: true
@@ -140,7 +140,7 @@ function prepareForOrder(sender) {
 }
 
 //Products mongooose schema
-var Products = mongoose.model('Product', {
+var Products = mongoose.model('products', {
     Name: String,
     Price: Number,
     Size: String
