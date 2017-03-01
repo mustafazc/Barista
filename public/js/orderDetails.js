@@ -13,9 +13,9 @@ var $items = $('#items');
 
                         ($.each(items,function(i,product){
                             if(product % 1 === 0 ){
-                                $items.append('<li>' +product)
-                            // } else if (product.prev() % 1 === 0){
-                            // $items.append( product + " " + '</li>')
+                            //     $items.append('<li>' +product)
+                            // // } else if (product.prev() % 1 === 0){
+                            // // $items.append( product + " " + '</li>')
                         } else {
                         $items.append('<li>' +product + " " + '</li>')
                             }
