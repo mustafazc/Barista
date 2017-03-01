@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+        <title>Mom N Pop's Cafe</title>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+    </head>
+    <body>
+        <h1 class="center-align">Orders</h1>
+        <br>
+        <table class="responsive-table bordered ">
+          <thead>
+            <tr>
+              <th data-field="name">Customer Name</th>
+              <th data-field="price">Order Amount</th>
+              <th data-field="size">Order Details</th>
+            </tr>
+          </thead>
+          <tbody id=orders>
+              <td></td>
+              <td></td>
+              <td id=items></td>
+          </tbody>
+        </table>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js" charset="utf-8"></script>
+        <script src="./javascript/orders.js" charset="utf-8"></script>
+        <script src="./javascript/orderDetails.js" charset="utf-8"></script>
+    </body>
+</html>

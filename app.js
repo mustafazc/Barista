@@ -21,10 +21,19 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // Index route
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
+})
+
+// Menu route
+app.get('/menu', function(req, res) {
+    res.sendFile(path.join(__dirname + '/menu.html'));
+})
+
+// Menu route
+app.get('/orders', function(req, res) {
+    res.sendFile(path.join(__dirname + '/orders.html'));
 })
 
 // Webhook for Facebook verification
@@ -32,11 +41,9 @@ app.get('/webhook/', function(req, res) {
     if (req.query['hub.verify_token'] === 'barista') {
         res.status(200).send(req.query['hub.challenge'])
     } else {
-    res.send('Error, wrong token')
+        res.send('Error, wrong token')
     }
 })
-
-
 
 // Run the server
 app.listen(app.get('port'), function() {
@@ -111,26 +118,26 @@ var dueOrders = mongoose.model('dueOrders', {
 // Function that creates a new document for each user ID
 function prepareForOrder(sender) {
     console.log(sender)
-    var potentialOrder = new dueOrders({
-        CustomerName : "facebook pls give name",
-        CustomerId : sender,
-        Total : 0,
-        Order : "",
-        created_at : Date.now()
-    })
+    var potentialOrder = new dueOrders({CustomerName: "facebook pls give name", CustomerId: sender, Total: 0, Order: "", created_at: Date.now()})
     potentialOrder.save().then(function(err, result) {
         console.log('Order from - ' + sender);
     });
-// Fetch name from facebook and change the customer name
-    dueOrders.findOneAndUpdate({CustomerId: sender}, {$set:{CustomerName:"facebookk"}}, {new: true}, function(err, doc){
-        if(err){
+    // Fetch name from facebook and change the customer name
+    dueOrders.findOneAndUpdate({
+        CustomerId: sender
+    }, {
+        $set: {
+            CustomerName: "facebookk"
+        }
+    }, {
+        new: true
+    }, function(err, doc) {
+        if (err) {
             console.log("Something wrong when updating data!");
         }
         console.log(doc);
     });
 }
-
-
 
 //Products mongooose schema
 var Products = mongoose.model('Product', {
@@ -139,16 +146,14 @@ var Products = mongoose.model('Product', {
     Size: String
 });
 
-
 // Endpoint to get all orders for view
-app.get('/orders', (req, res) => {
+app.get('/dueorders', (req, res) => {
     dueOrders.find().then((dueOrders) => {
         res.send({dueOrders});
     }, (e) => {
         res.status(400).send(e);
     })
 });
-
 
 // Get Data from API.AI and filter
 app.post('/apiai', (req, res) => {
@@ -164,9 +169,6 @@ app.post('/apiai', (req, res) => {
 
 })
 
-
-
-
 // Function to remove all empty values of order data
 function filterOrderData(orderData) {
     var cleanOrders = _.reject(orderData, function(orders) {
@@ -177,22 +179,26 @@ function filterOrderData(orderData) {
 }
 
 // Function to send order amount to user set to delay
-function sendOrder(){
+function sendOrder() {
     // Get the latest order ID
-    var latestOrderId = dueOrders.findOne({},{ sort: ('created_at') }, function(err, orders) {
-        if (err){
+    var latestOrderId = dueOrders.findOne({}, {
+        sort: ('created_at')
+    }, function(err, orders) {
+        if (err) {
             console.log(err)
         } else {
             // Find the matching order with the latest ID
-            dueOrders.findOne({_id: orders}, function(err, doc){
-                if(err){
+            dueOrders.findOne({
+                _id: orders
+            }, function(err, doc) {
+                if (err) {
                     console.log("Something wrong when updating data!");
                 }
                 // Total is the due amount and customer ID is the facebook ID
                 var billText = 'The total bill is AED ' + doc.Total + '!'
                 var customerID = doc.CustomerId
-                sendBill(billText,customerID)
-                function sendBill( billText,customerID) {
+                sendBill(billText, customerID)
+                function sendBill(billText, customerID) {
                     request({
                         url: 'https://graph.facebook.com/v2.6/me/messages',
                         qs: {
@@ -277,70 +283,79 @@ function matchPrice(cleanOrders, newProd) {
                 prepareOrder(totalBill3)
             }
         } else if (order.Coffee_Addons !== undefined && order.Types !== undefined) {
-                // Find when Coffee addon and type are specified
-                var matched = _.where(newProd, {
-                    Name: order.Coffee_Addons,
-                    Size: 'Regular'
-                })
-                var matched2 = _.where(newProd, {
-                    Name: order.Types.Coffee_Type,
-                    Size: order.Types.Coffee_Size
-                })
-                if (order.Types.number !== undefined) {
-                    var totalBill4 = (matched[0].Price + matched2[0].Price) * order.Types.number
-                    prepareOrder(totalBill4)
-                } else {
-                    var totalBill4 = matched[0].Price + matched2[0].Price
-                    prepareOrder(totalBill4)
-                }
-        } else if (order.Coffee_Addons !== undefined && order.Quantity.number !== undefined){
-                // Find when Coffee addon and type are specified along with quantity
-                var matched = _.where(newProd, {
-                    Name: order.Coffee_Addons,
-                    Size: 'Regular'
-                })
-                var matched2 = _.where(newProd, {
-                    Name: order.Quantity.Coffee_Type,
-                    Size: 'Grande'
-                })
-                if (order.Quantity.number !== undefined) {
-                    var totalBill4 = (matched[0].Price + matched2[0].Price) * order.Quantity.number
-                    prepareOrder(totalBill4)
-                } else {
-                    var totalBill4 = matched[0].Price + matched2[0].Price
-                    prepareOrder(totalBill4)
-                }
+            // Find when Coffee addon and type are specified
+            var matched = _.where(newProd, {
+                Name: order.Coffee_Addons,
+                Size: 'Regular'
+            })
+            var matched2 = _.where(newProd, {
+                Name: order.Types.Coffee_Type,
+                Size: order.Types.Coffee_Size
+            })
+            if (order.Types.number !== undefined) {
+                var totalBill4 = (matched[0].Price + matched2[0].Price) * order.Types.number
+                prepareOrder(totalBill4)
+            } else {
+                var totalBill4 = matched[0].Price + matched2[0].Price
+                prepareOrder(totalBill4)
+            }
+        } else if (order.Coffee_Addons !== undefined && order.Quantity.number !== undefined) {
+            // Find when Coffee addon and type are specified along with quantity
+            var matched = _.where(newProd, {
+                Name: order.Coffee_Addons,
+                Size: 'Regular'
+            })
+            var matched2 = _.where(newProd, {
+                Name: order.Quantity.Coffee_Type,
+                Size: 'Grande'
+            })
+            if (order.Quantity.number !== undefined) {
+                var totalBill4 = (matched[0].Price + matched2[0].Price) * order.Quantity.number
+                prepareOrder(totalBill4)
+            } else {
+                var totalBill4 = matched[0].Price + matched2[0].Price
+                prepareOrder(totalBill4)
+            }
         }
 
     })
     updateOrder(cleanOrders)
 }
 
+function prepareOrder(order, totalBill1, totalBill2, totalBill3, totalBill4) {
 
-function prepareOrder(order, totalBill1, totalBill2, totalBill3, totalBill4 ) {
-
-    if(order){
+    if (order) {
         // Passes to database to store and display to frontend
         updatePrice(order)
-    } else if (totalBill1){
+    } else if (totalBill1) {
         potentialOrder.total = potentialOrder.total + totalBill1
-    } else if (totalBill2){
+    } else if (totalBill2) {
         potentialOrder.total = potentialOrder.total + totalBill2
-    } else if (totalBill3){
+    } else if (totalBill3) {
         potentialOrder.total = potentialOrder.total + totalBill3
     }
 }
 
 // Update price function which gets order amounts and is run for each matching order
-function updatePrice(order){
+function updatePrice(order) {
     // Finds the nenwest order
-    var latestOrderId = dueOrders.findOne({},{ sort: ('created_at') }, function(err, orders) {
-        if (err){
+    var latestOrderId = dueOrders.findOne({}, {
+        sort: ('created_at')
+    }, function(err, orders) {
+        if (err) {
             console.log(err)
         } else {
             //Finds the matching order for the newest ID and increases price by the order for each product
-            dueOrders.findOneAndUpdate({_id: orders}, {$inc:{Total: order}}, {new: true}, function(err, doc){
-                if(err){
+            dueOrders.findOneAndUpdate({
+                _id: orders
+            }, {
+                $inc: {
+                    Total: order
+                }
+            }, {
+                new: true
+            }, function(err, doc) {
+                if (err) {
                     console.log("Something wrong when updating data!");
                 }
 
@@ -352,13 +367,23 @@ function updatePrice(order){
 }
 
 // Updates the order data with the filtered version of the order for front end use
-function updateOrder(cleanOrders){
-    var latestOrderId = dueOrders.findOne({},{ sort: ('created_at') }, function(err, orders) {
-        if (err){
+function updateOrder(cleanOrders) {
+    var latestOrderId = dueOrders.findOne({}, {
+        sort: ('created_at')
+    }, function(err, orders) {
+        if (err) {
             console.log(err)
         } else {
-            dueOrders.findOneAndUpdate({_id: orders}, {$set:{Order: cleanOrders}}, {new: true}, function(err, doc){
-                if(err){
+            dueOrders.findOneAndUpdate({
+                _id: orders
+            }, {
+                $set: {
+                    Order: cleanOrders
+                }
+            }, {
+                new: true
+            }, function(err, doc) {
+                if (err) {
                     console.log(err);
                 }
                 console.log(doc);
@@ -366,7 +391,6 @@ function updateOrder(cleanOrders){
         }
     });
 }
-
 
 // Endpoint to get all products for view
 app.get('/products', (req, res) => {
