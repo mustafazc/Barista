@@ -325,6 +325,7 @@ function matchPrice(cleanOrders, newProd) {
 function prepareOrder(order, totalBill1, totalBill2, totalBill3, totalBill4) {
 
     if (order) {
+        console.log(order)
         // Passes to database to store and display to frontend
         updatePrice(order)
     } else if (totalBill1) {
