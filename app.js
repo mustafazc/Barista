@@ -165,7 +165,7 @@ app.post('/apiai', (req, res) => {
 
     }
     res.status(200)
-    setTimeout(sendOrder, 5000);
+    setTimeout(sendOrder, 10000);
 
 })
 
