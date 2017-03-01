@@ -28,12 +28,12 @@ app.get('/', function(req, res) {
 
 // Menu route
 app.get('/menu', function(req, res) {
-    res.sendFile(path.join(__dirname + '/menu.html'));
+    res.sendFile(path.join(__dirname + '/public/menu.html'));
 })
 
 // Orders route
 app.get('/orders', function(req, res) {
-    res.sendFile(path.join(__dirname + '/orders.html'));
+    res.sendFile(path.join(__dirname + '/public/orders.html'));
 })
 
 // Webhook for Facebook verification
