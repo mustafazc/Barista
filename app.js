@@ -31,7 +31,7 @@ app.get('/menu', function(req, res) {
     res.sendFile(path.join(__dirname + '/menu.html'));
 })
 
-// Menu route
+// Orders route
 app.get('/orders', function(req, res) {
     res.sendFile(path.join(__dirname + '/orders.html'));
 })
