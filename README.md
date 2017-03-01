@@ -12,4 +12,5 @@ This project is for a Facebook Messenger Bot that collects orders for a coffee s
 4. run npm start to get the bot up and running
 
 ### The bot is available at -
-https://www.messenger.com/t/MomNPopCafe
+
+https://www.facebook.com/MomNPopCafe/
