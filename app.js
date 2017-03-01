@@ -174,6 +174,7 @@ function filterOrderData(orderData) {
     var cleanOrders = _.reject(orderData, function(orders) {
         return orders === '';
     });
+    console.log(cleanOrders)
     loadMenu(cleanOrders)
 
 }
