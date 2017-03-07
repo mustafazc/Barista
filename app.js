@@ -136,8 +136,7 @@ function prepareForOrder(sender) {
         CustomerId: sender
     }, {
         $set: {
-            CustomerName: "Facebook Name",
-            Total: 0
+            CustomerName: "Facebook Name"
         }
     }, {
         new: true
