@@ -8,7 +8,7 @@ const _ = require('underscore');
 const apiai = require('apiai');
 const path = require('path');
 // Package and API key for api.ai
-const apiaiApp = apiai('process.env.API_AI');
+const apiaiApp = apiai(process.env.API_AI);
 
 app.set('port', (process.env.PORT || 3000));
 
@@ -19,7 +19,7 @@ app.listen(app.get('port'), function() {
 
 // Mongoose Connection
 var mongoose = require('mongoose');
-mongoose.connect('process.env.MONGODB_URI');
+mongoose.connect(process.env.MONGODB_URI);
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: false}));
@@ -76,7 +76,7 @@ app.post('/webhook/', (req, res) => {
 });
 
 // Facebook Access Token
-const token = 'process.env.FACEBOOK_TOKEN';
+const token = process.env.FACEBOOK_TOKEN;
 
 // Send message function which passes on message to api.ai and responds to user
 function sendMessage(event) {
