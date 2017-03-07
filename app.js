@@ -136,7 +136,8 @@ function prepareForOrder(sender) {
         CustomerId: sender
     }, {
         $set: {
-            CustomerName: "Facebook Name"
+            CustomerName: "Facebook Name",
+            Total: 0
         }
     }, {
         new: true
@@ -171,10 +172,9 @@ app.post('/apiai', (req, res) => {
 
         filterOrderData(orderData);
         console.log('Received an order');
-        setTimeout(sendOrder, 10000);
     }
     res.status(200);
-
+    setTimeout(sendOrder, 10000);
 
 });
 
@@ -202,7 +202,7 @@ function sendOrder() {
             }, function(err, doc) {
                 if (err) {
                     console.log("Something wrong when updating data!");
-                }
+                } else {
                 // Total is the due amount and customer ID is the facebook ID
                 var billText = 'The total bill is AED ' + doc.Total + '!';
                 var customerID = doc.CustomerId;
@@ -230,6 +230,7 @@ function sendOrder() {
                         }
                     });
                 }
+            }
             });
         }
     });
