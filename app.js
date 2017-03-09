@@ -9,17 +9,18 @@ const apiai = require('apiai');
 const path = require('path');
 // Package and API key for api.ai
 const apiaiApp = apiai(process.env.API_AI);
+// Facebook Access Token
+const token = process.env.FACEBOOK_TOKEN;
 
+var {mongoose} = require('./server/db/mongoose');
+var {products} = require('./server/models/products');
+var {dueOrders} = require('./server/models/dueOrders');
 app.set('port', (process.env.PORT || 3000));
 
 // Run the server
 app.listen(app.get('port'), function() {
     console.log('Ready to receive messages @', app.get('port'));
 });
-
-// Mongoose Connection
-var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI);
 
 //Middleware
 app.use(bodyParser.urlencoded({extended: false}));
@@ -43,7 +44,7 @@ app.get('/orders', function(req, res) {
 
 // Endpoint to get all products for view
 app.get('/products', (req, res) => {
-    Products.find().then((products) => {
+    products.find().then((products) => {
         res.send(products);
     }, (e) => {
         res.status(400).send(e);
@@ -51,7 +52,7 @@ app.get('/products', (req, res) => {
 });
 
 // Webhook for Facebook verification
-app.get('/webhook', function(req, res) {
+app.get('/webhook', function(req, res)  {
     if (req.query['hub.verify_token'] === 'barista') {
         res.status(200).send(req.query['hub.challenge']);
     } else {
@@ -74,9 +75,6 @@ app.post('/webhook/', (req, res) => {
         res.status(200).end();
     }
 });
-
-// Facebook Access Token
-const token = process.env.FACEBOOK_TOKEN;
 
 // Send message function which passes on message to api.ai and responds to user
 function sendMessage(event) {
@@ -116,13 +114,7 @@ function sendMessage(event) {
 
     apiai.end();
 }
-// Mongoose model for orders
-var dueOrders = mongoose.model('dueOrders', {
-    CustomerName: String,
-    CustomerId: String,
-    Total: Number,
-    Order: {}
-});
+
 
 // Function that creates a new document for each user ID
 function prepareForOrder(sender) {
@@ -148,13 +140,6 @@ function prepareForOrder(sender) {
         console.log(doc);
     });
 }
-
-//Products mongooose schema
-var Products = mongoose.model('products', {
-    Name: String,
-    Price: Number,
-    Size: String
-});
 
 // Endpoint to get all orders for view
 app.get('/dueorders', (req, res) => {
@@ -238,7 +223,7 @@ function sendOrder() {
 
 // Loads the menu to a variable so price checking can be done
 function loadMenu(cleanOrders, potentialOrder) {
-    Products.find(function(err, products) {
+    products.find(function(err, products) {
 
         var newProd = products;
         // Passes filtered Order with menu to price matcher
