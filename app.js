@@ -1,12 +1,9 @@
 'use strict';
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const request = require('request');
-const app = express();
 const _ = require('underscore');
 const apiai = require('apiai');
-const path = require('path');
 // Package and API key for api.ai
 const apiaiApp = apiai(process.env.API_AI);
 // Facebook Access Token
@@ -15,6 +12,7 @@ const token = process.env.FACEBOOK_TOKEN;
 var {mongoose} = require('./server/db/mongoose');
 var {products} = require('./server/models/products');
 var {dueOrders} = require('./server/models/dueOrders');
+var {app} = require('./server/routes');
 app.set('port', (process.env.PORT || 3000));
 
 // Run the server
@@ -22,59 +20,6 @@ app.listen(app.get('port'), function() {
     console.log('Ready to receive messages @', app.get('port'));
 });
 
-//Middleware
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Index route
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
-});
-
-// Menu route
-app.get('/menu', function(req, res) {
-    res.sendFile(path.join(__dirname + '/public/menu.html'));
-});
-
-// Orders route
-app.get('/orders', function(req, res) {
-    res.sendFile(path.join(__dirname + '/public/orders.html'));
-});
-
-// Endpoint to get all products for view
-app.get('/products', (req, res) => {
-    products.find().then((products) => {
-        res.send(products);
-    }, (e) => {
-        res.status(400).send(e);
-    });
-});
-
-// Webhook for Facebook verification
-app.get('/webhook', function(req, res)  {
-    if (req.query['hub.verify_token'] === 'barista') {
-        res.status(200).send(req.query['hub.challenge']);
-    } else {
-        res.send('Error, wrong token');
-    }
-});
-
-
-// Webhook to catch all messages
-app.post('/webhook/', (req, res) => {
-    console.log(req.body);
-    if (req.body.object === 'page') {
-        req.body.entry.forEach((entry) => {
-            entry.messaging.forEach((event) => {
-                if (event.message && event.message.text) {
-                    sendMessage(event);
-                }
-            });
-        });
-        res.status(200).end();
-    }
-});
 
 // Send message function which passes on message to api.ai and responds to user
 function sendMessage(event) {
@@ -140,28 +85,6 @@ function prepareForOrder(sender) {
         console.log(doc);
     });
 }
-
-// Endpoint to get all orders for view
-app.get('/dueorders', (req, res) => {
-    dueOrders.find().then((dueOrders) => {
-        res.send({dueOrders});
-    }, (e) => {
-        res.status(400).send(e);
-    });
-});
-
-// Get Data from API.AI and filter
-app.post('/apiai', (req, res) => {
-    if (req.body.result.action === 'order') {
-        const orderData = req.body.result.parameters;
-
-        filterOrderData(orderData);
-        console.log('Received an order');
-    }
-    res.status(200);
-    setTimeout(sendOrder, 10000);
-
-});
 
 // Function to remove all empty values of order data
 function filterOrderData(orderData) {
